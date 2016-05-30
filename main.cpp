@@ -2,6 +2,7 @@
 
 int main() {
   Quoridor quoridor;
-  quoridor.displayBoard();
+  // quoridor.displayBoard();
+  quoridor.play();
   return 1;
 }

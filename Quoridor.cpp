@@ -163,30 +163,25 @@ void Quoridor::updateWall(int sX, int sY, int eX, int eY) {
 // Returns: -1 if no player has won
 //           0 if player 1 has won
 //           1 if player 2 has won
-int Quoridor::isGameOver(Player p) {
+int Quoridor::isGameOver() {
 
-  // 1st player reached end
-  if (turn == 0) {
-    if(p.x == 17)
-      return 0;
-  }
+  if (p1.x == 17)
+    return 0;
 
-  // 2nd player reached end
-  if (turn == 1) {
-    if(p.x == 1)
-      return 1;
-  }
+  if (p2.x == 1)
+    return 1;
 
   return -1;
 }
 
 // Displays the quoridor board
 void Quoridor::displayBoard() {
+  cout << "    1   2   3   4   5   6   7   8   9" << endl;
 
-  cout << "   1  2  3  4  5  6  7  8  9" << endl;
-
+  // Edges are even numbers, spaces are odd numbers.
   for (int i=0; i<19; i++) {
 
+    // Vertical numbers.
     if (i % 2 != 0)
       cout << i / 2 + 1 << " ";
     else
@@ -198,13 +193,19 @@ void Quoridor::displayBoard() {
 	if (j % 2 == 0)
 	  cout << ".";
 	else
-	  cout << "--";
+	  cout << "---";
       }
       else {
 	if (j % 2 == 0)
 	  cout << "|";
-	else
-	  cout << "  ";
+	else {
+	  if (p1.x == i && p1.y == j)
+	    cout << " 1 ";
+	  else if (p2.x == i && p1.y == j)
+	    cout << " 2 ";
+	  else
+	    cout << "   ";
+	}
       }
     }
 
@@ -212,3 +213,23 @@ void Quoridor::displayBoard() {
   }
 }
 
+void Quoridor::play() {
+  cout << "Welcome to Quoridor!" << endl;
+  while (isGameOver() == -1) {
+    // Display current board.
+    displayBoard();
+    
+    // Prompt player for move.
+    string move;
+    if (!turn)
+      cout << endl << p1.name << "> ";
+    else
+      cout << endl << p2.name << "> ";
+
+    cin >> move;
+    // Either move or build wall.
+    
+    // Switch turns.
+    turn = (turn + 1) % 2;
+  }
+}

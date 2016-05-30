@@ -36,10 +36,13 @@ class Quoridor {
   void updateWall(int sX, int sY, int eX, int eY);
 
   // Checks if a player has won
-  int isGameOver(Player p);
+  int isGameOver();
 
   // Displays the board
   void displayBoard();
+
+  // Play a game of Quoridor.
+  void play();
 
  private:
   // Player 1

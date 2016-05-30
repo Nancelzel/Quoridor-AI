@@ -4,16 +4,16 @@
 // Represents a wall
 struct Wall {
   // Starting x coordinate of wall
-  double sX;
+  int sX;
 
   // Starting y coordinate of wall
-  double sY;
+  int sY;
 
   // Ending x coordinate of wall
-  double eX;
+  int eX;
 
   // Ending y coordinate of wall
-  double eY;
+  int eY;
 };
 
 #endif

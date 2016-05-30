@@ -9,10 +9,10 @@ struct Player {
   std::string name;
 
   // Current x coordinate
-  double x;
+  int x;
 
   // Current y coordinate
-  double y;
+  int y;
 
   // Number of walls player has left
   int numWalls;
