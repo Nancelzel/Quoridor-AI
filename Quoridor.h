@@ -1,28 +1,9 @@
-#include <string>
-
-using namespace std;
+#include "Player.h"
+#include "Wall.h"
 
 class Quoridor {
  public:
-  // Represents a player
-  struct Player {
-
-    string name;        // name of player
-    double x;              // current x coordinate
-    double y;              // current y coordinate
-    int numWalls;       // number of walls player has left
-  };
-
-  // Represents a wall
-  struct Wall {
-
-    double sX;              // start x coordinate of wall
-    double sY;              // start y coordinate of wall
-    double eX;              // end x coordinate of wall
-    double eY;              // end y coordinate of wall
-  };
-  
-  // Quoridor constructor
+  // Constructor
   Quoridor() {
     // Player 1 starts at the left side of board
     p1.name = "Player 1";
@@ -40,20 +21,42 @@ class Quoridor {
     turn = 0;
     numWalls = 0;
     bound = 9;
-  }
-  
-  bool isLegalMove(Player p1, Player p2, double x, double y);  // Checks if player move is legal
-  bool isLegalWall(Player p);                      // Checks if wall placed is legal
-  void updatePlayer(Player p1, Player p2, int x, int y); // Updates current player's position
-  void updateWall(int sX, int sY, int eX, int eY); // Add a wall on the board
-  int isGameOver(Player p);                        // Checks if a player has won
-  void displayBoard();                             // Displays the board
+  }  
+
+  // Checks if player move is legal
+  bool isLegalMove(Player p1, Player p2, double x, double y);
+
+  // Checks if wall placed is legal
+  bool isLegalWall(Player p);
+
+  // Updates current player's position
+  void updatePlayer(Player p1, Player p2, int x, int y);
+
+  // Add a wall on the board
+  void updateWall(int sX, int sY, int eX, int eY);
+
+  // Checks if a player has won
+  int isGameOver(Player p);
+
+  // Displays the board
+  void displayBoard();
 
  private:
-  Player p1;           // player 1
-  Player p2;           // player 2
-  Wall walls[20];      // list of current walls on the board
-  int numWalls;        // number of walls placed in game
-  int turn;            // 0 = player 1, 1 = player 2
-  double bound;        // board bound
+  // Player 1
+  Player p1;
+
+  // Player 2
+  Player p2;
+
+  // List of current walls on the board
+  Wall walls[20];
+
+  // Number of walls placed in game
+  int numWalls;
+
+  // 0 = player 1, 1 = player 2
+  int turn;
+
+  // Board bound
+  double bound;
 };
