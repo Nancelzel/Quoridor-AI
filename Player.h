@@ -14,7 +14,7 @@ struct Player {
   // Current y coordinate
   int y;
 
-  // Number of walls player has left
+  // Number of walls player has on the board
   int numWalls;
 };
 
