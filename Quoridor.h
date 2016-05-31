@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Wall.h"
 
+#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -55,9 +56,6 @@ class Quoridor {
   // Returns the opposing player
   Player* opposingPlayer();
 
-  // Returns a vector of pairs of positions occupied by walls.
-  std::vector<std::pair<int, int>> getWallPositions();
-
  private:
   // Player 1
   Player* p1;
@@ -66,7 +64,6 @@ class Quoridor {
   Player* p2;
 
   // List of current walls on the board
-  // TODO: Should be 10 walls per player?
   Wall walls[20];
 
   // Number of walls placed in game

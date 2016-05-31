@@ -2,7 +2,6 @@
 // Board is 18 x 18 to represent grooves and squares
 
 #include "Quoridor.h"
-#include <iostream>
 #include <iterator>
 #include <sstream>
 #include <vector>
@@ -16,7 +15,6 @@ using namespace std;
 //            x  - new x position to move to
 //            y  - new y position to move to
 bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
-
   // New location is off the board
   if (x < 0 || y < 0 || x > bound || y > bound) {
     cout << "Out of bounds." << endl;
@@ -242,21 +240,11 @@ Player* Quoridor::opposingPlayer() {
   return p1;
 }
 
-/*
-unordered_set<pair<int, int>> Quoridor::getWallPositions() {
-  unordered_set<pair<int, int>> output;
-  for (int i = 0; i < numWalls; ++i) {
-    output.insert(make_pair(walls[i].sX, walls[i].sY));
-    output.insert(make_pair(walls[i].eX, walls[i].eY));
-  }
-  return output;
-}
-*/
-
 void Quoridor::play() {
   cout << "Welcome to Quoridor!" << endl;
   cout << "m x y: Move to (x, y)" << endl;
   cout << "w xs ys xe ye: Place wall from (xs, ys) to (xe, ye)" << endl << endl;
+  string input;
   while (isGameOver() == -1) {
     // Display current board.
     displayBoard();
@@ -267,7 +255,6 @@ void Quoridor::play() {
     else
       cout << endl << p2->name << "> ";
 
-    string input;
     getline(cin, input);
     istringstream iss(input);
     vector<string> move{istream_iterator<string>{iss},
@@ -294,4 +281,10 @@ void Quoridor::play() {
       cout << "Invalid move. Please try again." << endl;
     }
   }
+
+  if (isGameOver() == 0)
+    cout << p1->name << " has won!" << endl;
+  else if (isGameOver() == 1)
+    cout << p2->name << " has won!" << endl;
 }
+
