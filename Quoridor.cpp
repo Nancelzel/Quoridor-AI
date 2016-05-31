@@ -3,6 +3,8 @@
 
 #include "Quoridor.h"
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <vector>
 #include <cmath>
 
@@ -112,7 +114,7 @@ bool Quoridor::isLegalMove(Player p1, Player p2, double x, double y) {
 	return true;
     }
 
-    cout << "Invalid move." << endl;
+    // cout << "Invalid move." << endl;
 
     return false;
   }
@@ -213,23 +215,57 @@ void Quoridor::displayBoard() {
   }
 }
 
+Player Quoridor::currPlayer() {
+  if (turn == 0)
+    return p1;
+  return p2;
+}
+
+Player Quoridor::opposingPlayer() {
+  if (turn == 0)
+    return p2;
+  return p1;
+}
+
 void Quoridor::play() {
   cout << "Welcome to Quoridor!" << endl;
+  cout << "m x y: Move to (x, y)" << endl;
+  cout << "w xs ys xe ye: Place wall from (xs, ys) to (xe, ye)" << endl << endl;
   while (isGameOver() == -1) {
     // Display current board.
     displayBoard();
     
     // Prompt player for move.
-    string move;
     if (!turn)
       cout << endl << p1.name << "> ";
     else
       cout << endl << p2.name << "> ";
 
-    cin >> move;
+    string input;
+    getline(cin, input);
+    istringstream iss(input);
+    vector<string> move{istream_iterator<string>{iss},
+	istream_iterator<string>{}};
+
     // Either move or build wall.
-    
-    // Switch turns.
-    turn = (turn + 1) % 2;
+    if (move.size() == 3 && move[0] == "m") {
+      if (isLegalMove(currPlayer(), opposingPlayer(), stoi(move[1]), stoi(move[2]))) {
+	// cout << "valid move" << endl;
+	
+	// Switch turns.
+	turn = (turn + 1) % 2;
+      }
+    }
+    else if (move.size() == 5 && move[0] == "w") {
+      if (isLegalWall(currPlayer())) {
+	// cout << "valid wall" << endl;
+	
+	// Switch turns.
+	turn = (turn + 1) % 2;
+      }
+    }
+    else {
+      cout << "Invalid move. Please try again." << endl;
+    }
   }
 }

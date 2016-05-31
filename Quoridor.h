@@ -44,6 +44,12 @@ class Quoridor {
   // Play a game of Quoridor.
   void play();
 
+  // Returns the current player
+  Player currPlayer();
+
+  // Returns the opposing player
+  Player opposingPlayer();
+
  private:
   // Player 1
   Player p1;
@@ -52,6 +58,7 @@ class Quoridor {
   Player p2;
 
   // List of current walls on the board
+  // TODO: Should be 10 walls per player?
   Wall walls[20];
 
   // Number of walls placed in game
