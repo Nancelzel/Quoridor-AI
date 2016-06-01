@@ -9,6 +9,12 @@ struct Wall {
   // Starting y coordinate of wall
   int sY;
 
+  // Middle x coordinate of wall
+  int mX;
+
+  // Middle y coordinate of wall
+  int mY;
+
   // Ending x coordinate of wall
   int eX;
 

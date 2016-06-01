@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Wall.h"
+#include "Coordinate.h"
 
 #include <iostream>
 #include <utility>
@@ -33,13 +34,16 @@ class Quoridor {
   bool isLegalMove(Player* p1, Player* p2, int x, int y);
 
   // Checks if wall placed is legal
-  bool isLegalWall(Player* p, int sX, int sY, int eX, int eY);
+  bool isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int eY);
 
   // Updates player's position
   void updatePlayer(Player* p, int x, int y);
 
   // Add a wall on the board
   void updateWall(Player* p, int sX, int sY, int eX, int eY);
+
+  // Flood fill algorithm to check if there is still a clear end to path
+  bool floodfill(std::vector<Coordinate> visited, Coordinate* curSpace);
 
   // Checks if a player has won
   int isGameOver();

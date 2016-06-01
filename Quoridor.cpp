@@ -51,7 +51,6 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
           if ((p1->x + 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x + 2 == convertX && p1->y - 2 == convertY))
 
-            cout << "One" << endl;
             return true;
         }
       }
@@ -73,7 +72,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
           if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x - 2 == convertX && p1->y - 2 == convertY))
-            cout<< "Two" << endl;
+
             return true;
         }
       }
@@ -95,7 +94,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
           if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x - 2 == convertX && p1->y - 2 == convertY))
-            cout << "Three" << endl;
+
             return true;
         }
       }
@@ -117,7 +116,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
           if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x - 2 == convertX && p1->y - 2 == convertY))
-            cout << "Four" << endl;
+
             return true;
         }
       }
@@ -127,32 +126,109 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
         return true;
     }
 
-    cout << "Invalid move. Please choose another location." << endl;
+    cout << "Invalid move. Enter again." << endl;
 
     return false;
   }
-
-  cout << "Five" << endl;
 
   return true;
 }
 
 // Checks if the wall placed is legal
-bool Quoridor::isLegalWall(Player* p, int sX, int sY, int eX, int eY) {
-  if (p->numWalls == 10) {
-    cout << p->name << " has no more walls." << endl;
+// Arguments: p1  - current player placing the wall
+//            p2  - opposing player
+//            sX  - start x position for wall
+//            sY  - start y position for wall
+//            eX  - end x position for wall
+//            eY  - end y position for wall
+bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int eY) {
+
+  // Check player still has wall to put down
+  if (p1->numWalls == 10) {
+    cout << p1->name << " has no more walls. Enter again." << endl;
     return false;
   }
 
-  // Use floodfill algorithm
+  // Check wall does not cross boundaries
+  if (sX < 0 || sY < 0 || eX < 0 || eY < 0 || sX > bound || sY > bound) {
+    cout << "Wall crosses boundaries. Enter again." << endl;
+    return false;
+  }
+
+  // Check that wall is not at the boundaries
+
+  // Check that wall does not overlap with existing walls on board
+
+  vector<Coordinate> visited;
+  Coordinate curSpace;
+  curSpace.x = p1->x;
+  curSpace.y = p1->y;
+
+  // Use floodfill algorithm to determine if a path is still reachable after adding wall for
+  // current player.
+  if(!floodfill(visited, curSpace)) {
+    cout << "This wall prevents " << p1->name << " from reaching the end! Enter again." << endl;
+    return false;
+  }
+
+  visited.clear();
+  curSpace.x = p2->x;
+  curSpace.y = p2->y;
+
+  if(!floodfill(visited, curSpace)) {
+    cout << "This wall prevents " << p2->name << " from reaching the end! Enter again." << endl;
+    return false;
+  }
+
   return true;
+}
+
+// Flood fill algorithm to check if there is still a clear end to path
+bool Quoridor::floodfill(vector<Coordinate> visited, Coordinate* curSpace) {
+
+  // Check if current space overlaps with a wall
+  for (int i=0; i<numWalls; i++) {
+    Wall curWall = walls[i];
+
+    if ((curSpace->x == curWall->sX && curSpace->y == curWall->sY) ||
+        (curSpace->x == curWall->mX && curSpace->y == curWall->mY) ||
+        (curSpace->x == curWall->eX && curSpace->y == curWall->eY))
+      return false;
+  }
+
+  // Check if end goal is reached; if not check adjacent spaces
+  if (turn == 0 && curSpace->y == 17)
+    return true;
+  else if (turn == 1 && curSpace->y == 1)
+    return true;
+  else {
+    visited.add(curSpace);
+    Coordinate nextSpace;
+    nextSpace.x = curSpace->x + 2;
+    nextSpace.y = curSpace->y;
+    bool east = floodfill(visited, nextSpace);
+    nextSpace.x = curSpace->x - 2;
+    nextSpace.y = curSpace->y;
+    bool west = floodfill(visited, nextSpace);
+    nextSpace.x = curSpace->x;
+    nextSpace.y = curSpace->y + 2;
+    bool north = floodfill(visited, nextSpace);
+    nextSpace.x = curSpace->x;
+    nextSpace.y = curSpace->y - 2;
+    bool south = floodfill(visited, nextSpace);
+
+    if (east || west || north || south)
+      return true;
+
+    return false;
+  }
 }
 
 // Updates the player's position
 void Quoridor::updatePlayer(Player* p, int x, int y) {
+
   p->x = 2 * x - 1;
   p->y = 2 * y - 1;
-  return;
 }
 
 // Add another wall
@@ -162,7 +238,24 @@ void Quoridor::updateWall(Player* p, int sX, int sY, int eX, int eY) {
   w.sX = sX;
   w.sY = sY;
   w.eX = eX;
-  w. eY = eY;
+  w.eY = eY;
+
+  if (sX == eX) {
+    w.mX = sX;
+
+    if (sY < eY)
+      w.mY = sY + 1;
+    else
+      w.mY = sY - 1;
+  }
+  else {
+    w.mY = sY;
+
+    if (sX < eX)
+      w.mX = sX + 1;
+    else
+      w.mY = sX - 1;
+  }
 
   walls[numWalls] = w;
   numWalls++;
@@ -186,6 +279,7 @@ int Quoridor::isGameOver() {
 
 // Displays the quoridor board
 void Quoridor::displayBoard() {
+
   cout << "    1   2   3   4   5   6   7   8   9" << endl;
 
   // Edges are even numbers, spaces are odd numbers.
@@ -246,18 +340,21 @@ void Quoridor::displayBoard() {
 }
 
 Player* Quoridor::currPlayer() {
+
   if (turn == 0)
     return p1;
   return p2;
 }
 
 Player* Quoridor::opposingPlayer() {
+
   if (turn == 0)
     return p2;
   return p1;
 }
 
 void Quoridor::play() {
+
   cout << "Welcome to Quoridor!" << endl;
   cout << "m x y: Move to (x, y)" << endl;
   cout << "w xs ys xe ye: Place wall from (xs, ys) to (xe, ye)" << endl << endl;
@@ -287,7 +384,7 @@ void Quoridor::play() {
       }
     }
     else if (move.size() == 5 && move[0] == "w") {
-      if (isLegalWall(currPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]))) {
+      if (isLegalWall(currPlayer(), opposingPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]))) {
 	updateWall(currPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]));
 	
 	// Switch turns.
