@@ -82,7 +82,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 	Wall curWall = walls[i];
 
 	if ((curWall.sY + 1 == p2->y && curWall.eY + 1 == p2->y) &&
-	    (curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) || (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x)) {
+	    ((curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) || (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
 	  if ((p1->x - 2 == convertX && p1->y + 2 == convertY) || (p1->x - 2 == convertX && p1->y - 2 == convertY))
 	    return true;
 	}
@@ -101,7 +101,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 	Wall curWall = walls[i];
 
 	if ((curWall.sY - 1 == p2->y && curWall.eY - 1 == p2->y) &&
-	    (curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) || (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x)) {
+	    ((curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) || (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
 	  if ((p1->x - 2 == convertX && p1->y + 2 == convertY) || (p1->x - 2 == convertX && p1->y - 2 == convertY))
 	    return true;
 	}
