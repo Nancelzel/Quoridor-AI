@@ -17,21 +17,21 @@ using namespace std;
 bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
   // New location is off the board
   if (x < 0 || y < 0 || x > bound || y > bound) {
-    cout << "Out of bounds." << endl;
+    cout << "Out of bounds. Please choose another location." << endl;
     return false;
   }
 
   // New location is occupied by another player
   if (p2->x == x && p2->y == y) {
-    cout << "Location occupied by another player." << endl;
+    cout << "Location occupied by another player. Please choose another location." << endl;
     return false;
   }
 
-  double convertX = x * 2 - 1;
-  double convertY = y * 2 - 1;
+  int convertX = x * 2 - 1;
+  int convertY = y * 2 - 1;
 
-  double xDist = abs(p1->x - convertX);
-  double yDist = abs(p1->y - convertY);
+  int xDist = abs(p1->x - convertX);
+  int yDist = abs(p1->y - convertY);
 
   // New location is not adjacent/orthogonal to player
   if ((xDist > 2 && yDist == 0) || (xDist == 0 && yDist > 2)) {
@@ -41,18 +41,20 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 
       // New location is walled
       for (int i=0; i<numWalls; i++) {
-	Wall curWall = walls[i];
+        Wall curWall = walls[i];
 
-	if ((curWall.sX - 1 == p2->x && curWall.eX - 1 == p2->x) &&
-	    ((curWall.sY + 1 == p2->y && curWall.eY - 1 == p2->y) || (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
-	  if ((p1->x + 2 == convertX && p1->y + 2 == convertY) || (p1->x + 2 == convertX && p1->y - 2 == convertY))
-	    return true;
-	}
+        if ((curWall.sX - 1 == p2->x && curWall.eX - 1 == p2->x) &&
+           ((curWall.sY + 1 == p2->y && curWall.eY - 1 == p2->y) ||
+            (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
+          if ((p1->x + 2 == convertX && p1->y + 2 == convertY) ||
+              (p1->x + 2 == convertX && p1->y - 2 == convertY))
+            return true;
+        }
       }
 
       // New location is a jump forward
       if (p1->x + 4 == convertX && p1->y == convertY)
-	return true;
+        return true;
     }
 
     // Other player is behind current player
@@ -60,18 +62,20 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 
       // New location is walled
       for (int i=0; i<numWalls; i++) {
-	Wall curWall = walls[i];
+        Wall curWall = walls[i];
 
-	if ((curWall.sX + 1 == p2->x && curWall.eX + 1 == p2->x) &&
-	    ((curWall.sY + 1 == p2->y && curWall.eY - 1 == p2->y)|| (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
-	  if ((p1->x - 2 == convertX && p1->y + 2 == convertY) || (p1->x - 2 == convertX && p1->y - 2 == convertY))
-	    return true;
-	}
+        if ((curWall.sX + 1 == p2->x && curWall.eX + 1 == p2->x) &&
+           ((curWall.sY + 1 == p2->y && curWall.eY - 1 == p2->y) ||
+            (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
+          if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
+              (p1->x - 2 == convertX && p1->y - 2 == convertY))
+            return true;
+        }
       }
 
       // New location is a jump backwards
       if (p1->x - 4 == convertX && p1->y == convertY)
-	return true;
+        return true;
     }
 
     // Other player is above current player
@@ -79,18 +83,20 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 
       // New location is walled
       for (int i=0; i<numWalls; i++) {
-	Wall curWall = walls[i];
+        Wall curWall = walls[i];
 
-	if ((curWall.sY + 1 == p2->y && curWall.eY + 1 == p2->y) &&
-	    ((curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) || (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
-	  if ((p1->x - 2 == convertX && p1->y + 2 == convertY) || (p1->x - 2 == convertX && p1->y - 2 == convertY))
-	    return true;
-	}
+        if ((curWall.sY + 1 == p2->y && curWall.eY + 1 == p2->y) &&
+           ((curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) ||
+            (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
+          if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
+              (p1->x - 2 == convertX && p1->y - 2 == convertY))
+            return true;
+        }
       }
 
       // New location is a jump upwards
       if (p1->x == convertX && p1->y - 4 == convertY)
-	return true;
+        return true;
     }
 
     // Other player is below current player
@@ -98,21 +104,23 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 
       // New location is walled
       for (int i=0; i<numWalls; i++) {
-	Wall curWall = walls[i];
+        Wall curWall = walls[i];
 
-	if ((curWall.sY - 1 == p2->y && curWall.eY - 1 == p2->y) &&
-	    ((curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) || (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
-	  if ((p1->x - 2 == convertX && p1->y + 2 == convertY) || (p1->x - 2 == convertX && p1->y - 2 == convertY))
-	    return true;
-	}
+        if ((curWall.sY - 1 == p2->y && curWall.eY - 1 == p2->y) &&
+           ((curWall.sX + 1 == p2->x && curWall.eX - 1 == p2->x) ||
+            (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
+          if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
+              (p1->x - 2 == convertX && p1->y - 2 == convertY))
+            return true;
+        }
       }
 
       // New location is a jump downwards
       if (p1->x == convertX && p1->y + 4 == convertY)
-	return true;
+        return true;
     }
 
-    // cout << "Invalid move." << endl;
+    cout << "Invalid move. Please choose another location." << endl;
 
     return false;
   }
