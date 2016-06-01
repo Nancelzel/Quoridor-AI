@@ -159,10 +159,10 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
 
   // Check that wall does not overlap with existing walls on board
 
-  vector<Coordinate> visited;
-  Coordinate curSpace;
-  curSpace.x = p1->x;
-  curSpace.y = p1->y;
+  vector<Coordinate*> visited;
+  Coordinate* curSpace;
+  curSpace->x = p1->x;
+  curSpace->y = p1->y;
 
   // Use floodfill algorithm to determine if a path is still reachable after adding wall for
   // current player.
@@ -172,8 +172,8 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
   }
 
   visited.clear();
-  curSpace.x = p2->x;
-  curSpace.y = p2->y;
+  curSpace->x = p2->x;
+  curSpace->y = p2->y;
 
   if(!floodfill(visited, curSpace)) {
     cout << "This wall prevents " << p2->name << " from reaching the end! Enter again." << endl;
@@ -184,15 +184,15 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
 }
 
 // Flood fill algorithm to check if there is still a clear end to path
-bool Quoridor::floodfill(vector<Coordinate> visited, Coordinate* curSpace) {
+bool Quoridor::floodfill(vector<Coordinate*> visited, Coordinate* curSpace) {
 
   // Check if current space overlaps with a wall
   for (int i=0; i<numWalls; i++) {
     Wall curWall = walls[i];
 
-    if ((curSpace->x == curWall->sX && curSpace->y == curWall->sY) ||
-        (curSpace->x == curWall->mX && curSpace->y == curWall->mY) ||
-        (curSpace->x == curWall->eX && curSpace->y == curWall->eY))
+    if ((curSpace->x == curWall.sX && curSpace->y == curWall.sY) ||
+        (curSpace->x == curWall.mX && curSpace->y == curWall.mY) ||
+        (curSpace->x == curWall.eX && curSpace->y == curWall.eY))
       return false;
   }
 
@@ -202,19 +202,19 @@ bool Quoridor::floodfill(vector<Coordinate> visited, Coordinate* curSpace) {
   else if (turn == 1 && curSpace->y == 1)
     return true;
   else {
-    visited.add(curSpace);
-    Coordinate nextSpace;
-    nextSpace.x = curSpace->x + 2;
-    nextSpace.y = curSpace->y;
+    visited.push_back(curSpace);
+    Coordinate* nextSpace;
+    nextSpace->x = curSpace->x + 2;
+    nextSpace->y = curSpace->y;
     bool east = floodfill(visited, nextSpace);
-    nextSpace.x = curSpace->x - 2;
-    nextSpace.y = curSpace->y;
+    nextSpace->x = curSpace->x - 2;
+    nextSpace->y = curSpace->y;
     bool west = floodfill(visited, nextSpace);
-    nextSpace.x = curSpace->x;
-    nextSpace.y = curSpace->y + 2;
+    nextSpace->x = curSpace->x;
+    nextSpace->y = curSpace->y + 2;
     bool north = floodfill(visited, nextSpace);
-    nextSpace.x = curSpace->x;
-    nextSpace.y = curSpace->y - 2;
+    nextSpace->x = curSpace->x;
+    nextSpace->y = curSpace->y - 2;
     bool south = floodfill(visited, nextSpace);
 
     if (east || west || north || south)
