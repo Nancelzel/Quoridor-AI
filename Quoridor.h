@@ -12,15 +12,15 @@ class Quoridor {
     // Player 1 starts at the left side of board
     p1 = new Player();
     p1->name = "Player 1";
-    p1->x = 1;
-    p1->y = 9;
+    p1->x = 9;
+    p1->y = 1;
     p1->numWalls = 0;
 
     // Player 2 starts at the right side of board
     p2 = new Player();
     p2->name = "Player 2";
-    p2->x = 17;
-    p2->y = 9;
+    p2->x = 9;
+    p2->y = 17;
     p2->numWalls = 0;
     
     // Start with player 1

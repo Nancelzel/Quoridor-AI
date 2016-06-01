@@ -17,13 +17,13 @@ using namespace std;
 bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
   // New location is off the board
   if (x < 0 || y < 0 || x > bound || y > bound) {
-    cout << "Out of bounds. Please choose another location." << endl;
+    cout << "Out of bounds. Enter again." << endl;
     return false;
   }
 
   // New location is occupied by another player
   if (p2->x == x && p2->y == y) {
-    cout << "Location occupied by another player. Please choose another location." << endl;
+    cout << "Location occupied by another player. Enter again." << endl;
     return false;
   }
 
@@ -33,8 +33,10 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
   int xDist = abs(p1->x - convertX);
   int yDist = abs(p1->y - convertY);
 
+  cout << xDist << " " << yDist << endl;
+
   // New location is not adjacent/orthogonal to player
-  if ((xDist > 2 && yDist == 0) || (xDist == 0 && yDist > 2)) {
+  if (xDist > 2 || yDist > 2) {
 
     // Other player is in front of current player
     if (p2->x - 2 == p1->x && p2->y == p1->y) {
@@ -48,6 +50,8 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
           if ((p1->x + 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x + 2 == convertX && p1->y - 2 == convertY))
+
+            cout << "One" << endl;
             return true;
         }
       }
@@ -69,6 +73,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sY - 1 == p2->y && curWall.eY + 1 == p2->y))) {
           if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x - 2 == convertX && p1->y - 2 == convertY))
+            cout<< "Two" << endl;
             return true;
         }
       }
@@ -90,6 +95,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
           if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x - 2 == convertX && p1->y - 2 == convertY))
+            cout << "Three" << endl;
             return true;
         }
       }
@@ -111,6 +117,7 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
             (curWall.sX - 1 == p2->x && curWall.eX + 1 == p2->x))) {
           if ((p1->x - 2 == convertX && p1->y + 2 == convertY) ||
               (p1->x - 2 == convertX && p1->y - 2 == convertY))
+            cout << "Four" << endl;
             return true;
         }
       }
@@ -124,6 +131,8 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
 
     return false;
   }
+
+  cout << "Five" << endl;
 
   return true;
 }
@@ -191,48 +200,48 @@ void Quoridor::displayBoard() {
     for (int j=0; j<19; j++) {
         
       if (i % 2 == 0) {
-	if (j % 2 == 0)
-	  cout << ".";
-	else {
-	  bool wall = false;
-	  for (int k = 0; k < numWalls; ++k) {
-	    if ((walls[k].sX == i && walls[k].sY == j) ||
-		(walls[k].eX == i && walls[k].eY == j)) {
-	      cout << " W ";
-	      wall = true;
-	      break;
-	    } 
-	  }
-	  if (!wall)
-	    cout << "---";
-	}
-      }
-      else {
-	if (j % 2 == 0) {
-	  bool wall = false;
-	  for (int k = 0; k < numWalls; ++k) {
-	    if ((walls[k].sX == i && walls[k].sY == j) ||
-		(walls[k].eX == i && walls[k].eY == j)) {
-	      cout << "W";
-	      wall = true;
-	      break;
-	    } 
-	  }
-	  if (!wall)
-	    cout << "|";
-	}
-	else {
-	  if (p1->x == i && p1->y == j)
-	    cout << " 1 ";
-	  else if (p2->x == i && p1->y == j)
-	    cout << " 2 ";
-	  else
-	    cout << "   ";
-	}
+        if (j % 2 == 0)
+          cout << ".";
+        else {
+          bool wall = false;
+          for (int k = 0; k < numWalls; ++k) {
+            if ((walls[k].sX == i && walls[k].sY == j) ||
+                (walls[k].eX == i && walls[k].eY == j)) {
+              cout << " W ";
+            wall = true;
+            break;
+          }
+        }
+        if (!wall)
+          cout << "---";
       }
     }
+    else {
+      if (j % 2 == 0) {
+        bool wall = false;
+        for (int k = 0; k < numWalls; ++k) {
+          if ((walls[k].sX == i && walls[k].sY == j) ||
+              (walls[k].eX == i && walls[k].eY == j)) {
+            cout << "W";
+            wall = true;
+            break;
+          }
+        }
+        if (!wall)
+          cout << "|";
+      }
+      else {
+        if (p1->x == i && p1->y == j)
+          cout << " 1 ";
+        else if (p2->x == i && p2->y == j)
+          cout << " 2 ";
+        else
+          cout << "   ";
+      }
+    }
+  }
 
-    cout << endl;
+  cout << endl;
   }
 }
 
