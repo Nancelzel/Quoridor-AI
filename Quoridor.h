@@ -5,6 +5,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <unordered_set>
 
 class Quoridor {
  public:
@@ -28,7 +29,13 @@ class Quoridor {
     turn = 0;
     numWalls = 0;
     bound = 9;
-  }  
+  }
+
+  // Checks if there is a wall at (x, y).
+  bool isWall(int x, int y);
+
+  // Checks if the given space is on the board.
+  bool onBoard(int x, int y);
 
   // Checks if player move is legal
   bool isLegalMove(Player* p1, Player* p2, int x, int y);
@@ -43,7 +50,8 @@ class Quoridor {
   void updateWall(Player* p, int sX, int sY, int eX, int eY);
 
   // Flood fill algorithm to check if there is still a clear end to path
-  bool floodfill(std::vector<Coordinate*> visited, Coordinate* curSpace);
+  // bool floodfill(std::vector<Coordinate*> visited, Coordinate* curSpace);
+  bool floodfill(Player* p, int end);
 
   // Checks if a player has won
   int isGameOver();
@@ -68,7 +76,8 @@ class Quoridor {
   Player* p2;
 
   // List of current walls on the board
-  Wall walls[20];
+  // Wall walls[20];
+  std::unordered_set<std::string> walls;
 
   // Number of walls placed in game
   int numWalls;
