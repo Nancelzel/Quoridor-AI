@@ -10,6 +10,14 @@
 
 using namespace std;
 
+// gets number of walls on board for current player
+int Quoridor::getNumWalls() {
+
+  if (turn == 0)
+    return p1->numWalls;
+  return p2->numWalls;
+}
+
 // TODO: Walls are 0 to 18 (inclusive). Spaces are 1 to 17 (inclusive). Check that there aren't
 // off-by-one errors etc.
 
@@ -126,6 +134,12 @@ bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
     return true;
 
   return false;
+}
+
+// For the AIs to use
+bool Quoridor::checkLegalWall(int sX, int sY, int eX, int eY) {
+
+  return isLegalWall(currPlayer(), opposingPlayer(), sX, sY, eX, eY);
 }
 
 // Checks if the wall placed is legal
@@ -250,23 +264,6 @@ void Quoridor::updateWall(Player* p, int sX, int sY, int eX, int eY) {
   w.sY = sY;
   w.eX = eX;
   w.eY = eY;
-
-  if (sX == eX) {
-    w.mX = sX;
-
-    if (sY < eY)
-      w.mY = sY + 1;
-    else
-      w.mY = sY - 1;
-  }
-  else {
-    w.mY = sY;
-
-    if (sX < eX)
-      w.mX = sX + 1;
-    else
-      w.mY = sX - 1;
-  }
 
   walls.insert(to_string(sX) + " " + to_string(sY));
   walls.insert(to_string(eX) + " " + to_string(eY));
