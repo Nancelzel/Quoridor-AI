@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Wall.h"
-#include "Coordinate.h"
 
 #include <iostream>
 #include <utility>
@@ -53,7 +52,6 @@ class Quoridor {
   void updateWall(Player* p, int sX, int sY, int eX, int eY);
 
   // Flood fill algorithm to check if there is still a clear end to path
-  // bool floodfill(std::vector<Coordinate*> visited, Coordinate* curSpace);
   bool floodfill(Player* p1, Player* p2, int end);
 
   // Checks if a player has won

@@ -10,6 +10,9 @@
 
 using namespace std;
 
+// TODO: Walls are 0 to 18 (inclusive). Spaces are 1 to 17 (inclusive). Check that there aren't
+// off-by-one errors etc.
+
 bool Quoridor::isWall(int x, int y) {
   return (x % 2)^(y % 2);
 }
@@ -76,8 +79,8 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
     return false;
 
   // Check wall does not cross boundaries and is not on the edges of the board.
-  if (sX < 2 || sY < 2 || eX < 2 || eY < 2 ||
-      sX > 16 || sY > 16 || eX > 16 || eY > 16) {
+  if (sX == 0 || sY == 0 || eX == 0 || eY == 0 ||
+      sX == 18 || sY == 18 || eX == 18 || eY == 18) {
     cout << "Wall crosses boundaries. Enter again." << endl;
     return false;
   }
