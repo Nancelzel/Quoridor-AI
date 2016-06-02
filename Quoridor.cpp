@@ -353,6 +353,42 @@ Player* Quoridor::opposingPlayer() {
   return p1;
 }
 
+// Returns a unique string representation of the board as a key for
+// the Monte Carlo hash table where
+//  - = area taken by wall
+//  0 = empty area
+//  2 = area taken by player 1
+//  3 = area taken by player 2
+string Quoridor::boardToStr(Player *p1, Player *p2) {
+
+  char toReturn[324] = {'0'};
+  int arrI = 18 * p1->x + p1->y;
+  toReturn[arrI] = '1';
+  arrI = 18 * p2->x + p2->y;
+  toReturn[arrI] = '2';
+
+  unordered_set<string>::const_iterator curWall;
+
+  for (curWall = walls.begin(); curWall != walls.end(); ++curWall) {
+    vector<string> coords = split(*curWall, ' ');
+    arrI = 18 * stoi(coords.at(0)) + stoi(coords.at(1));
+    toReturn[arrI] = '-';
+  }
+
+  return string(toReturn);
+}
+
+// Splits a string by the passed in character d
+vector<string> Quoridor::split(const string &s, char d) {
+    vector<string> v;
+    stringstream ss(s);
+    string item;
+    while (getline(ss, item, d)) {
+        v.push_back(item);
+    }
+    return v;
+}
+
 void Quoridor::play() {
 
   cout << "Welcome to Quoridor!" << endl;

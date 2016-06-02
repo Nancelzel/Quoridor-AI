@@ -70,6 +70,13 @@ class Quoridor {
   // Returns the opposing player
   Player* opposingPlayer();
 
+  // Returns a unique string representation of the board as a key for
+  // the Monte Carlo hash table
+  std::string boardToStr(Player* p1, Player* p2);
+
+  // Splits a string by the passed in character d
+  std::vector<std::string> split(const std::string &s, char d);
+
  private:
   // Player 1
   Player* p1;
