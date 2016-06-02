@@ -6,8 +6,25 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include <unordered_map>
 
 using namespace std;
+
+// std::unordered_map<int, char> intToChar ({{0, 'A'}, {2, 'B'}, {4, 'C'}, {6, 'D'}, {8, 'E'}, {10, 'F'}, {12, 'G'}, {14, 'H'}, {16, 'I'}, {18, 'J'}});
+// std::unordered_map<int, char> charToInt ({{'A', 0}, {'B', 2}, {'C', 4}, {'D', 6}, {'E', 8}, {'F', 10}, {'G', 12}, {'H', 14}, {'I', 16}, {'J', 18}});
+
+/*
+// Gets the integer corresponding to the letter.
+int getInt(char letter) {
+  return (int)letter;
+}
+
+// Gets the letter corresponding to the integer.
+char getLetter(int number) {
+  // return number - 87;
+  return '0' + number;
+}
+*/
 
 // Checks if move for player is legal
 // Arguments: p1 - current player
@@ -294,8 +311,11 @@ void Quoridor::displayBoard() {
     for (int j=0; j<19; j++) {
         
       if (i % 2 == 0) {
-        if (j % 2 == 0)
-          cout << ".";
+        if (j % 2 == 0) {
+	  cout << ".";
+	  if (j == 18)
+	    cout << " " << i;
+	}
         else {
           bool wall = false;
           for (int k = 0; k < numWalls; ++k) {
@@ -334,9 +354,9 @@ void Quoridor::displayBoard() {
       }
     }
   }
-
   cout << endl;
   }
+  cout << "  0   2   4   6   8   10  12  14  16  18" << endl;
 }
 
 Player* Quoridor::currPlayer() {
@@ -357,7 +377,7 @@ void Quoridor::play() {
 
   cout << "Welcome to Quoridor!" << endl;
   cout << "m x y: Move to (x, y)" << endl;
-  cout << "w xs ys xe ye: Place wall from (xs, ys) to (xe, ye)" << endl << endl;
+  cout << "w xs ys xe ye: Place wall at (xs, ys) and (xe, ye)" << endl << endl;
   string input;
   while (isGameOver() == -1) {
     // Display current board.
