@@ -13,6 +13,39 @@ using namespace std;
 // TODO: Walls are 0 to 18 (inclusive). Spaces are 1 to 17 (inclusive). Check that there aren't
 // off-by-one errors etc.
 
+void Quoridor::makeMove(string action) {
+  istringstream iss(action);
+  vector<string> move{istream_iterator<string>{iss},
+	istream_iterator<string>{}};
+
+  // Either move or build wall.
+  if (move.size() == 3 && move[0] == "m") {
+    if (isLegalMove(currPlayer(), opposingPlayer(), 2 * stoi(move[1]) - 1, 2 * stoi(move[2]) - 1)) {
+	updatePlayer(currPlayer(), stoi(move[1]), stoi(move[2]));
+	
+	// Switch turns.
+	turn = (turn + 1) % 2;
+    }
+    else {
+	cout << "Invalid move. Please try again." << endl;
+    }
+  }
+  else if (move.size() == 5 && move[0] == "w") {
+    if (isLegalWall(currPlayer(), opposingPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]))) {
+	updateWall(currPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]));
+	
+	// Switch turns.
+	turn = (turn + 1) % 2;
+    }
+    else {
+	cout << "Invalid wall. Please try again." << endl;
+    }
+  }
+  else {
+    cout << "Invalid input. Please try again." << endl;
+  }
+}
+
 bool Quoridor::isWall(int x, int y) {
   return (x % 2)^(y % 2);
 }
@@ -26,6 +59,10 @@ bool Quoridor::onBoard(int x, int y) {
   return (x > 0 && y > 0 && x < 18 && y < 18);
 }
 
+// Generates vector of strings that represent possible moves.
+// p1: Player whose turn it is
+// p2: Other player
+// returns: vector of strings (e.g. "m 5 2")
 vector<string> Quoridor::getLegalMoves(Player* p1, Player* p2) {
     vector<string> result;
     ostringstream oss;
@@ -53,6 +90,7 @@ vector<string> Quoridor::getLegalMoves(Player* p1, Player* p2) {
         result.push_back(oss.str());
     }
     
+    // This magic denotes the first possible vertical wall
     int sx_start = 1;
     int sy_start = 2;
     int ex_start = 3;
@@ -61,7 +99,7 @@ vector<string> Quoridor::getLegalMoves(Player* p1, Player* p2) {
     // Check legal wall placements
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            // Check vertical walls
+            // Check vertical walls by iterating through possible positions
             int sx = sx_start + 2 * i;
             int sy = sy_start + 2 * j;
             int ex = ex_start + 2 * i;
@@ -244,30 +282,7 @@ void Quoridor::updatePlayer(Player* p, int x, int y) {
 
 // Add another wall
 void Quoridor::updateWall(Player* p, int sX, int sY, int eX, int eY) {
-
-  Wall w;
-  w.sX = sX;
-  w.sY = sY;
-  w.eX = eX;
-  w.eY = eY;
-
-  if (sX == eX) {
-    w.mX = sX;
-
-    if (sY < eY)
-      w.mY = sY + 1;
-    else
-      w.mY = sY - 1;
-  }
-  else {
-    w.mY = sY;
-
-    if (sX < eX)
-      w.mX = sX + 1;
-    else
-      w.mY = sX - 1;
-  }
-
+  // Insert wall string into set
   walls.insert(to_string(sX) + " " + to_string(sY));
   walls.insert(to_string(eX) + " " + to_string(eY));
   numWalls++;
@@ -410,36 +425,7 @@ void Quoridor::play() {
       cout << endl << p2->name << "> ";
 
     getline(cin, input);
-    istringstream iss(input);
-    vector<string> move{istream_iterator<string>{iss},
-	istream_iterator<string>{}};
-
-    // Either move or build wall.
-    if (move.size() == 3 && move[0] == "m") {
-      if (isLegalMove(currPlayer(), opposingPlayer(), 2 * stoi(move[1]) - 1, 2 * stoi(move[2]) - 1)) {
-	updatePlayer(currPlayer(), stoi(move[1]), stoi(move[2]));
-	
-	// Switch turns.
-	turn = (turn + 1) % 2;
-      }
-      else {
-	cout << "Invalid move. Please try again." << endl;
-      }
-    }
-    else if (move.size() == 5 && move[0] == "w") {
-      if (isLegalWall(currPlayer(), opposingPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]))) {
-	updateWall(currPlayer(), stoi(move[1]), stoi(move[2]), stoi(move[3]), stoi(move[4]));
-	
-	// Switch turns.
-	turn = (turn + 1) % 2;
-      }
-      else {
-	cout << "Invalid wall. Please try again." << endl;
-      }
-    }
-    else {
-      cout << "Invalid input. Please try again." << endl;
-    }
+    makeMove(input);
   }
 
   if (isGameOver() == 0)

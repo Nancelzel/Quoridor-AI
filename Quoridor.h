@@ -30,6 +30,8 @@ class Quoridor {
     bound = 9;
   }
 
+  void makeMove(std::string action);
+
   // Checks if this is a wall.
   bool isWall(int x, int y);
 
@@ -96,4 +98,12 @@ class Quoridor {
 
   // Board bound
   double bound;
+};
+
+class Board {
+    public:
+    Player players[2];
+    std::unordered_set<std::string> walls;
+
+    Board makeMove(Board b, std::string action, int turn);
 };
