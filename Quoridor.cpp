@@ -158,11 +158,14 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
   if (!((sX == eX && abs(sY - eY) == 2) ||
 	(abs(sX - eX) && sY == eY))) {
     cout << "Invalid walls. Enter again." << endl;
+    return false;
   }
 
   // Check that wall does not overlap with existing walls on board
-  if (isAlreadyWall(sX, sY) || isAlreadyWall(eX, eY))
+  if (isAlreadyWall(sX, sY) || isAlreadyWall(eX, eY)) {
     cout << "Wall already at location. Enter again." << endl;
+    return false;
+  }
   
   // Check p1.
   if(!floodfill(p1, p2, 17)) {
