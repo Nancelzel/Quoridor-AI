@@ -8,11 +8,11 @@
 using namespace std;
 
 // Returns the next move Randomizer decides to make to Quoridor
-string getNextMove(Quoridor q) {
+string Randomizer::getNextMove() {
 
   string toReturn = "";
 
-  if (moveOrWall(q) == 0) {
+  if (moveOrWall() == 0) {
     toReturn += "m ";
     vector<string> legalMoves = q.getLegalMoves(q.currPlayer(), q.opposingPlayer());
 
@@ -63,7 +63,7 @@ string getNextMove(Quoridor q) {
 // randomly decides to move or place a wall
 // Returns: 0 - move
 //          1 - place a wall
-int moveOrWall(Quoridor q) {
+int Randomizer::moveOrWall() {
   
   // AI has no more walls to place down, will strictly move
   if(q.getNumWalls() == 10)

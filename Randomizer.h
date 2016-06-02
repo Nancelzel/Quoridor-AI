@@ -4,10 +4,15 @@
 #include "Quoridor.h"
 #include <string>
 
-// Returns the next move Randomizer decides to make to Quoridor
-std::string getNextMove(Quoridor q);
+class Randomizer {
+  // Returns the next move Randomizer decides to make to Quoridor
+  std::string getNextMove();
 
-// randomly decides to move or place a wall
-int moveOrWall(Quoridor q);
+  // Randomly decides to move or place a wall
+  int moveOrWall();
+
+  Quoridor q;
+
+};
 
 #endif
