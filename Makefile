@@ -1,6 +1,6 @@
 CXX := g++
 FLAGS := -std=c++11 -g
-SOURCE := main.cpp Quoridor.cpp
+SOURCE := *.cpp
 
 all: main
 

@@ -1,20 +1,20 @@
 // Random AI to play Quoridor
 
 #include "Randomizer.h"
-#include "Quoridor.h"
-#include <string>
+// #include "Quoridor.h"
+// #include <string>
 #include <stdlib.h>
 
 using namespace std;
 
 // Returns the next move Randomizer decides to make to Quoridor
-String getNextMove() {
+string getNextMove(Quoridor q) {
 
-  String toReturn = "";
+  string toReturn = "";
 
-  if (moveOrWall() == 0) {
+  if (moveOrWall(q) == 0) {
     toReturn += "m ";
-    vector<string> legalMoves = getLegalMoves();
+    vector<string> legalMoves = q.getLegalMoves(q.currPlayer(), q.opposingPlayer());
 
     int randMove = rand() % legalMoves.size();
 
@@ -29,7 +29,7 @@ String getNextMove() {
     int eX = 0;
     int eY = 0;
 
-    while(!checkLegalWall(sX, sY, eX, eY)) { 
+    while(!q.checkLegalWall(sX, sY, eX, eY)) { 
       Wall w;
       sX = rand() % 17 + 1;
       sY = rand() % 17 + 1;
@@ -54,7 +54,7 @@ String getNextMove() {
       }
     }
 
-    toReturn += sX + " " + sY + " " + eX + " " + eY;
+    toReturn += to_string(sX) + " " + to_string(sY) + " " + to_string(eX) + " " + to_string(eY);
   }
 
   return toReturn;
@@ -63,10 +63,10 @@ String getNextMove() {
 // randomly decides to move or place a wall
 // Returns: 0 - move
 //          1 - place a wall
-int moveOrWall() {
+int moveOrWall(Quoridor q) {
   
   // AI has no more walls to place down, will strictly move
-  if(getNumWalls() == 10)
+  if(q.getNumWalls() == 10)
     return 0;
 
   return rand() % 2;
