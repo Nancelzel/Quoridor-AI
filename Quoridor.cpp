@@ -26,6 +26,74 @@ bool Quoridor::onBoard(int x, int y) {
   return (x > 0 && y > 0 && x < 18 && y < 18);
 }
 
+vector<string> Quoridor::getLegalMoves(Player* p1, Player* p2) {
+    vector<string> result;
+    ostringstream oss;
+    // Check legal movement to adjacent spaces, add action if valid
+    int x = p1->x;
+    int y = p1->y;
+    if (isLegalMove(p1, p2, x + 2, y)) {
+        oss.str("");
+        oss << "m " << x + 2 << " " << y;
+        result.push_back(oss.str());
+    }
+    if (isLegalMove(p1, p2, x - 2, y)) {
+        oss.str("");
+        oss << "m " << x - 2 << " " << y;
+        result.push_back(oss.str());
+    }
+    if (isLegalMove(p1, p2, x, y + 2)) {
+        oss.str("");
+        oss << "m " << x << " " << y + 2;
+        result.push_back(oss.str());
+    }
+    if (isLegalMove(p1, p2, x, y - 2)) {
+        oss.str("");
+        oss << "m " << x << " " << y - 2;
+        result.push_back(oss.str());
+    }
+    
+    int sx_start = 1;
+    int sy_start = 2;
+    int ex_start = 3;
+    int ey_start = 2;
+
+    // Check legal wall placements
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            // Check vertical walls
+            int sx = sx_start + 2 * i;
+            int sy = sy_start + 2 * j;
+            int ex = ex_start + 2 * i;
+            int ey = ey_start + 2 * j;
+
+            // If wall is legal, add action to result
+            if (isLegalWall(p1, p2, sx, sy, ex, ey)) {
+                oss.str("");
+                oss << "w " << sx << " " << sy << " " << ex << " " << ey;
+                result.push_back(oss.str());
+            }
+            // Swap coordinates to check horizontal walls
+            sx ^= sy;
+            sy ^= sx;
+            sx ^= sy;
+
+            ex ^= ey;
+            ey ^= ex;
+            ex ^= ey;
+            // If wall is legal, add action to result
+            if (isLegalWall(p1, p2, sx, sy, ex, ey)) {
+                oss.str("");
+                oss << "w " << sx << " " << sy << " " << ex << " " << ey;
+                result.push_back(oss.str());
+            }
+        }
+    }
+    return result;
+}
+
+    
+
 // Checks if move for player is legal
 // Arguments: p1 - current player
 //            p2 - opposing player
@@ -82,6 +150,7 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
   if (sX == 0 || sY == 0 || eX == 0 || eY == 0 ||
       sX == 18 || sY == 18 || eX == 18 || eY == 18) {
     cout << "Wall crosses boundaries. Enter again." << endl;
+    cout << sX << ", " << sY;
     return false;
   }
 
@@ -290,6 +359,10 @@ void Quoridor::play() {
   while (isGameOver() == -1) {
     // Display current board.
     displayBoard();
+    vector<string> s = getLegalMoves(p1, p2);
+    for (vector<string>::iterator it = s.begin(); it != s.end(); it ++){
+        cout << *it << "\n";
+    }
     
     // Prompt player for move.
     if (!turn)

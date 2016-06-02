@@ -39,6 +39,7 @@ class Quoridor {
   // Checks if the given space is on the board.
   bool onBoard(int x, int y);
 
+  std::vector<std::string> getLegalMoves(Player* p1, Player* p2);
   // Checks if player move is legal
   bool isLegalMove(Player* p1, Player* p2, int x, int y);
 
