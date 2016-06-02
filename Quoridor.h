@@ -31,8 +31,11 @@ class Quoridor {
     bound = 9;
   }
 
-  // Checks if there is a wall at (x, y).
+  // Checks if this is a wall.
   bool isWall(int x, int y);
+
+  // Checks if there is a wall at (x, y).
+  bool isAlreadyWall(int x, int y);
 
   // Checks if the given space is on the board.
   bool onBoard(int x, int y);
@@ -51,7 +54,7 @@ class Quoridor {
 
   // Flood fill algorithm to check if there is still a clear end to path
   // bool floodfill(std::vector<Coordinate*> visited, Coordinate* curSpace);
-  bool floodfill(Player* p, int end);
+  bool floodfill(Player* p1, Player* p2, int end);
 
   // Checks if a player has won
   int isGameOver();

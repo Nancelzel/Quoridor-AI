@@ -11,12 +11,16 @@
 using namespace std;
 
 bool Quoridor::isWall(int x, int y) {
+  return (x % 2)^(y % 2);
+}
+
+bool Quoridor::isAlreadyWall(int x, int y) {
   string key = to_string(x) + " " + to_string(y);
   return (walls.find(key) != walls.end());
 }
 
 bool Quoridor::onBoard(int x, int y) {
-  return (x < 0 && y < 0 && x > bound && y > bound);
+  return (x > 0 && y > 0 && x < 18 && y < 18);
 }
 
 // Checks if move for player is legal
@@ -27,30 +31,27 @@ bool Quoridor::onBoard(int x, int y) {
 // TODO: p1 and p2 aren't really necessary.
 bool Quoridor::isLegalMove(Player* p1, Player* p2, int x, int y) {
   // New location is off the board
-  if (!onBoard(x, y)) {
-    cout << "Out of bounds. Enter again." << endl;
+  if (!onBoard(x, y))
     return false;
-  }
 
   // Transform coordinates.
-  int convertX = x * 2 - 1;
-  int convertY = y * 2 - 1;
+  // int convertX = x * 2 - 1;
+  // int y = y * 2 - 1;
 
   // Check north.
-  // TODO: Check walls.
-  if (p1->x == convertX && p1->y - 1 == convertY)
+  if (p1->x == x - 2 && p1->y == y && !isAlreadyWall(p1->x - 1, p1->y))
     return true;
 
   // Check south.
-  else if (p1->x == convertX && p1->y + 1 == convertY)
+  else if (p1->x == x + 2 && p1->y == y && !isAlreadyWall(p1->x + 1, p1->y))
     return true;
 
   // Check east.
-  else if (p1->x + 1 == convertX && p1->y == convertY)
+  else if (p1->x == x && p1->y + 2 == y && !isAlreadyWall(p1->x, p1->y + 1))
     return true;
 
   // Check west.
-  else if (p1->x - 1 == convertX && p1->y == convertY)
+  else if (p1->x == x && p1->y - 2 == y && !isAlreadyWall(p1->x, p1->y - 1))
     return true;
 
   return false;
@@ -70,6 +71,10 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
     return false;
   }
 
+  // TODO: Check that wall is actually a wall. I.e., not space(s).
+  if (!isWall(sX, sY) || !isWall(eX, eY))
+    return false;
+
   // Check wall does not cross boundaries and is not on the edges of the board.
   if (sX < 2 || sY < 2 || eX < 2 || eY < 2 ||
       sX > 16 || sY > 16 || eX > 16 || eY > 16) {
@@ -84,17 +89,17 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
   }
 
   // Check that wall does not overlap with existing walls on board
-  if (isWall(sX, sY) || isWall(eX, eY))
+  if (isAlreadyWall(sX, sY) || isAlreadyWall(eX, eY))
     cout << "Wall already at location. Enter again." << endl;
   
   // Check p1.
-  if(!floodfill(p1, 17)) {
+  if(!floodfill(p1, p2, 17)) {
     cout << "This wall prevents " << p1->name << " from reaching the end! Enter again." << endl;
     return false;
   }
 
   // Check p2.
-  if(!floodfill(p2, 1)) {
+  if(!floodfill(p2, p1, 1)) {
     cout << "This wall prevents " << p2->name << " from reaching the end! Enter again." << endl;
     return false;
   }
@@ -103,47 +108,52 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
 }
 
 // Flood fill algorithm to check if there is still a clear end to path
-// bool Quoridor::floodfill(vector<Coordinate*> visited, Coordinate* curSpace) {
-bool Quoridor::floodfill(Player* p, int end) {
+// TODO: p2 added for compatibility with isLegalMove, but not actually needed.
+bool Quoridor::floodfill(Player* p1, Player* p2, int end) {
+  Player* p = new Player();
+  p->x = p1->x;
+  p->y = p1->y;
+
   vector<vector<bool>> visited(18, vector<bool>(18, false));
   queue<pair<int, int>> q;
 
   // Add player's current position to the queue.
-  q.push(make_pair(p->x, p->y));
-  visited[p->x][p->y] = true;
+  q.push(make_pair(p1->x, p1->y));
 
   while (!q.empty()) {
     // Get front of queue and pop off.
     pair<int, int> z = q.front();
     q.pop();
 
+    // Mark as visited.
+    visited[z.first][z.second] = true;
+
+    // Update current position.
+    p->x = z.first;
+    p->y = z.second;
+
     // Check if opposite side of board has been reached.
     if (z.first == end)
       return true;
 
     // Check north.
-    // TODO: add isLegalMove stipulation.
-    if (!isWall(z.first, z.second - 1) && !visited[z.first][z.second - 1]) {
-      q.push(make_pair(z.first, z.second - 1));
-      visited[z.first][z.second - 1] = true;
+    if (isLegalMove(p, p2, z.first - 2, z.second) && !visited[z.first - 2][z.second]) {
+      q.push(make_pair(z.first - 2, z.second));
     }
     
     // Check south.
-    if (!isWall(z.first, z.second + 1) && !visited[z.first][z.second + 1]) {
-      q.push(make_pair(z.first, z.second + 1));
-      visited[z.first][z.second + 1] = true;
+    if (isLegalMove(p, p2, z.first + 2, z.second) && !visited[z.first + 2][z.second]) {
+      q.push(make_pair(z.first + 2, z.second));
     }
     
     // Check east.
-    if (!isWall(z.first + 1, z.second) && !visited[z.first + 1][z.second]) {
-      q.push(make_pair(z.first + 1, z.second));
-      visited[z.first + 1][z.second] = true;
+    if (isLegalMove(p, p2, z.first, z.second + 2) && !visited[z.first][z.second + 2]) {
+      q.push(make_pair(z.first, z.second + 2));
     }
     
     // Check west.
-    if (!isWall(z.first - 1, z.second) && !visited[z.first - 1][z.second]) {
-      q.push(make_pair(z.first - 1, z.second));
-      visited[z.first - 1][z.second] = true;
+    if (isLegalMove(p, p2, z.first, z.second - 2) && !visited[z.first][z.second - 2]) {
+      q.push(make_pair(z.first, z.second - 2));
     }
   }
 
@@ -226,7 +236,7 @@ void Quoridor::displayBoard() {
 	    cout << " " << i;
 	}
         else {
-	  if (isWall(i, j))
+	  if (isAlreadyWall(i, j))
 	    cout << " W ";
 	  else
 	    cout << "---";
@@ -234,7 +244,7 @@ void Quoridor::displayBoard() {
     }
     else {
       if (j % 2 == 0) {
-	if (isWall(i, j))
+	if (isAlreadyWall(i, j))
 	  cout << "W";
 	else
 	  cout << "|";
@@ -291,11 +301,14 @@ void Quoridor::play() {
 
     // Either move or build wall.
     if (move.size() == 3 && move[0] == "m") {
-      if (isLegalMove(currPlayer(), opposingPlayer(), stoi(move[1]), stoi(move[2]))) {
+      if (isLegalMove(currPlayer(), opposingPlayer(), 2 * stoi(move[1]) - 1, 2 * stoi(move[2]) - 1)) {
 	updatePlayer(currPlayer(), stoi(move[1]), stoi(move[2]));
 	
 	// Switch turns.
 	turn = (turn + 1) % 2;
+      }
+      else {
+	cout << "Invalid move. Please try again." << endl;
       }
     }
     else if (move.size() == 5 && move[0] == "w") {
@@ -305,9 +318,12 @@ void Quoridor::play() {
 	// Switch turns.
 	turn = (turn + 1) % 2;
       }
+      else {
+	cout << "Invalid wall. Please try again." << endl;
+      }
     }
     else {
-      cout << "Invalid move. Please try again." << endl;
+      cout << "Invalid input. Please try again." << endl;
     }
   }
 
