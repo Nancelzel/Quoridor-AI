@@ -30,7 +30,11 @@ class Quoridor {
     bound = 9;
   }
 
+  // Makes a move on a board
   void makeMove(std::string action);
+
+  // gets the number of walls on board for current player
+  int getNumWalls();
 
   // Checks if this is a wall.
   bool isWall(int x, int y);
@@ -42,8 +46,12 @@ class Quoridor {
   bool onBoard(int x, int y);
 
   std::vector<std::string> getLegalMoves(Player* p1, Player* p2);
+
   // Checks if player move is legal
   bool isLegalMove(Player* p1, Player* p2, int x, int y);
+
+  // For the AIs to use
+  bool checkLegalWall(int sX, int sY, int eX, int eY);
 
   // Checks if wall placed is legal
   bool isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int eY);
