@@ -1,5 +1,5 @@
 CXX := g++
-FLAGS := -std=c++11 -g
+FLAGS := -std=c++11 -g -Wall
 SOURCE := *.cpp
 
 all: main
