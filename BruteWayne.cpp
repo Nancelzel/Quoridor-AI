@@ -10,11 +10,10 @@ bool operator<(const Node& lhs, const Node& rhs) {
 }
 
 std::string BruteWayne::getNextMove() {
-  return "TODO: implement this";
   // Choose whether to move or wall.
   // If wall, choose a random wall.
-  if (moveOrWall() == 0) {
-    std::vector<std::string> possible_walls = q.legalWalls(q.currPlayer(), q.opposingPlayer());
+  if (moveOrWall() == 1) {
+    std::vector<std::string> possible_walls = q->legalWalls(q->currPlayer(), q->opposingPlayer());
     std::random_shuffle(possible_walls.begin(), possible_walls.end());
     return possible_walls[0];
   }
@@ -22,14 +21,14 @@ std::string BruteWayne::getNextMove() {
   std::vector<std::vector<double>> dist(9, std::vector<double>(9, DBL_MAX));
   std::vector<std::vector<bool>> visited(9, std::vector<bool>(9, false));
   std::vector<std::vector<std::pair<int, int>>> prev(9, std::vector<std::pair<int, int>>(9, std::make_pair(-1, -1)));
-  dist[q.currPlayer()->x][q.currPlayer()->y] = 0;
+  dist[q->currPlayer()->x][q->currPlayer()->y] = 0;
 
   std::priority_queue<Node, std::vector<Node>> pq;
 
   // TODO: Make sure p1.x and p1.y are 0 to 17.
   for (int row = 0; row < 9; ++row) {
     for (int col = 0; col < 9; ++col) {
-      if (2 * row - 1 == q.currPlayer()->x && 2 * col - 1 == q.currPlayer()->y)
+      if (2 * row - 1 == q->currPlayer()->x && 2 * col - 1 == q->currPlayer()->y)
 	pq.push(std::make_pair(std::make_pair(row, col), 0.0));
       else
 	pq.push(std::make_pair(std::make_pair(row, col), DBL_MAX));
@@ -44,7 +43,7 @@ std::string BruteWayne::getNextMove() {
     pq.pop();
 
     // North
-    if (q.isLegalMove(q.currPlayer(), q.opposingPlayer(), 2*(x - 1)-1, 2*y-1) && !visited[x - 1][y]) {
+    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*(x - 1)-1, 2*y-1) && !visited[x - 1][y]) {
       double alt = dist[x][y] + 1;
       if (alt < dist[x-1][y]) {
 	dist[x-1][y] = alt;
@@ -53,7 +52,7 @@ std::string BruteWayne::getNextMove() {
     }
 	
     // South
-    if (q.isLegalMove(q.currPlayer(), q.opposingPlayer(), 2*(x + 1)-1, 2*y-1) && !visited[x + 1][y]) {
+    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*(x + 1)-1, 2*y-1) && !visited[x + 1][y]) {
       double alt = dist[x][y] + 1;
       if (alt < dist[x+1][y]) {
 	dist[x+1][y] = alt;
@@ -62,7 +61,7 @@ std::string BruteWayne::getNextMove() {
     }
     
     // East
-    if (q.isLegalMove(q.currPlayer(), q.opposingPlayer(), 2*x-1, 2*(y + 1)-1) && !visited[x][y+1]) {
+    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*x-1, 2*(y + 1)-1) && !visited[x][y+1]) {
       double alt = dist[x][y] + 1;
       if (alt < dist[x][y+1]) {
 	dist[x][y+1] = alt;
@@ -71,7 +70,7 @@ std::string BruteWayne::getNextMove() {
     }
 
     // West
-    if (q.isLegalMove(q.currPlayer(), q.opposingPlayer(), 2*x-1, 2*(y - 1)-1) && !visited[x][y-1]) {
+    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*x-1, 2*(y - 1)-1) && !visited[x][y-1]) {
       double alt = dist[x][y] + 1;
       if (alt < dist[x][y-1]) {
 	dist[x][y-1] = alt;
@@ -81,7 +80,7 @@ std::string BruteWayne::getNextMove() {
   }
 
   int endgame_col = 1;
-  if (q.getTurn())
+  if (q->getTurn())
     endgame_col = 9;
 
   int lowest_score = dist[0][endgame_col];
@@ -94,7 +93,7 @@ std::string BruteWayne::getNextMove() {
   }
 
   std::pair<int, int> next_move = std::make_pair(endgame_row, endgame_col);
-  while (prev[next_move.first][next_move.second] != std::make_pair(q.currPlayer()->x, q.currPlayer()->y)) {
+  while (prev[next_move.first][next_move.second] != std::make_pair(q->currPlayer()->x, q->currPlayer()->y)) {
     next_move = prev[next_move.first][next_move.second];
   }
   
@@ -104,7 +103,7 @@ std::string BruteWayne::getNextMove() {
 // TODO: Make sure to seed rand in both BruteWayne and Randomizer.
 int BruteWayne::moveOrWall() {
   // AI has no more walls to place down, will strictly move
-  if(q.getNumWalls() == 10)
+  if(q->getNumWalls() == 10)
     return 0;
 
   return rand() % 2;

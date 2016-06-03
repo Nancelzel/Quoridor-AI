@@ -3,11 +3,14 @@
 
 #include "Player.h"
 #include "Wall.h"
+#include "AI.h"
 
 #include <iostream>
 #include <utility>
 #include <vector>
 #include <unordered_set>
+
+class AI;
 
 class Quoridor {
  public:
@@ -61,11 +64,13 @@ class Quoridor {
   // Checks if the given space is on the board.
   bool onBoard(int x, int y);
 
+  std::vector<std::string> legalMoves(Player* p1, Player* p2);
   std::vector<std::string> legalWalls(Player* p1, Player* p2);
   std::vector<std::string> getLegalMoves(Player* p1, Player* p2);
 
   // Checks if player move is legal
   bool isLegalMove(Player* p1, Player* p2, int x, int y);
+  // bool isLegalMove(Player* p1, Player* p2, std::string move);
 
   // For the AIs to use
   bool checkLegalWall(int sX, int sY, int eX, int eY);
@@ -90,6 +95,8 @@ class Quoridor {
 
   // Play a game of Quoridor.
   void play();
+
+  void playAI(AI* ai1, AI* ai2);
 
   // Returns the current player
   Player* currPlayer();

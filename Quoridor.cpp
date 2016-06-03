@@ -72,6 +72,35 @@ bool Quoridor::onBoard(int x, int y) {
   return (x > 0 && y > 0 && x < 18 && y < 18);
 }
 
+vector<string> Quoridor::legalMoves(Player* p1, Player* p2) {
+    vector<string> result;
+    ostringstream oss;
+    // Check legal movement to adjacent spaces, add action if valid
+    int x = p1->x;
+    int y = p1->y;
+    if (isLegalMove(p1, p2, x + 2, y)) {
+        oss.str("");
+        oss << "m " << x + 2 << " " << y;
+        result.push_back(oss.str());
+    }
+    if (isLegalMove(p1, p2, x - 2, y)) {
+        oss.str("");
+        oss << "m " << x - 2 << " " << y;
+        result.push_back(oss.str());
+    }
+    if (isLegalMove(p1, p2, x, y + 2)) {
+        oss.str("");
+        oss << "m " << x << " " << y + 2;
+        result.push_back(oss.str());
+    }
+    if (isLegalMove(p1, p2, x, y - 2)) {
+        oss.str("");
+        oss << "m " << x << " " << y - 2;
+        result.push_back(oss.str());
+    }
+    return result;
+}
+
 vector<string> Quoridor::legalWalls(Player* p1, Player* p2) {
     vector<string> result;
     ostringstream oss;
@@ -346,9 +375,8 @@ bool Quoridor::floodfill(Player* p1, Player* p2, int end) {
 
 // Updates the player's position
 void Quoridor::updatePlayer(Player* p, int x, int y) {
-
-  p->x = 2 * x - 1;
-  p->y = 2 * y - 1;
+  p->x = x;
+  p->y = y;
 }
 
 // Add another wall
@@ -366,10 +394,10 @@ void Quoridor::updateWall(Player* p, int sX, int sY, int eX, int eY) {
 //           1 if player 2 has won
 int Quoridor::isGameOver() {
 
-  if (p1->x == 17)
+  if (p1->y == 17)
     return 0;
 
-  if (p2->x == 1)
+  if (p2->y == 1)
     return 1;
 
   return -1;
@@ -508,6 +536,39 @@ void Quoridor::play() {
 
     getline(cin, input);
     makeMove(input);
+  }
+
+  if (isGameOver() == 0)
+    cout << p1->name << " has won!" << endl;
+  else if (isGameOver() == 1)
+    cout << p2->name << " has won!" << endl;
+}
+
+void Quoridor::playAI(AI* ai1, AI* ai2) {
+  while (isGameOver() == -1) {
+    ai1->q = this;
+    ai2->q = this;
+
+    cout << "Player 1: " << p1->x << " " << p1->y << endl;
+    cout << "Player 2: " << p2->x << " " << p2->y << endl;
+
+    // Display current board.
+    displayBoard();
+
+    string move;
+    
+    // Prompt player for move.
+    if (!turn) {
+      move = ai1->getNextMove();
+      cout << "AI 1: " << move << endl;
+    }
+    else {
+      move = ai2->getNextMove();
+      cout << "AI 2: " << move << endl;
+    }
+
+    makeMove(move);
+    // break;
   }
 
   if (isGameOver() == 0)
