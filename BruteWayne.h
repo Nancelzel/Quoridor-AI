@@ -3,6 +3,8 @@
 
 #include "Quoridor.h"
 
+typedef std::pair<std::pair<int, int>, double> Node;
+
 class BruteWayne {
   // Returns the next move Randomizer decides to make to Quoridor
   std::string getNextMove();

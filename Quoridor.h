@@ -50,6 +50,8 @@ class Quoridor {
   // gets the number of walls on board for current player
   int getNumWalls();
 
+  int getTurn();
+
   // Checks if this is a wall.
   bool isWall(int x, int y);
 
@@ -59,6 +61,7 @@ class Quoridor {
   // Checks if the given space is on the board.
   bool onBoard(int x, int y);
 
+  std::vector<std::string> legalWalls(Player* p1, Player* p2);
   std::vector<std::string> getLegalMoves(Player* p1, Player* p2);
 
   // Checks if player move is legal
