@@ -1,3 +1,6 @@
+#ifndef QUORIDOR_H_
+#define QUORIDOR_H_
+
 #include "Player.h"
 #include "Wall.h"
 
@@ -29,6 +32,17 @@ class Quoridor {
     numWalls = 0;
     bound = 9;
   }
+
+  Quoridor(const Quoridor &q) {
+    p1 = new Player(*q.p1);
+    p2 = new Player(*q.p2);
+    turn = q.turn;
+    walls = std::unordered_set<std::string>(q.walls);
+    numWalls = q.numWalls;
+    bound = q.bound;
+  }
+
+
 
   // Makes a move on a board
   void makeMove(std::string action);
@@ -115,3 +129,5 @@ class Board {
 
     Board makeMove(Board b, std::string action, int turn);
 };
+
+#endif

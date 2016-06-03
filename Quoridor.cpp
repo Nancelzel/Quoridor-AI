@@ -7,6 +7,7 @@
 #include <vector>
 #include <cmath>
 #include <queue>
+#include <cstring>
 
 using namespace std;
 
@@ -96,6 +97,10 @@ vector<string> Quoridor::getLegalMoves(Player* p1, Player* p2) {
         oss.str("");
         oss << "m " << x << " " << y - 2;
         result.push_back(oss.str());
+    }
+
+    if (p1->numWalls == 10) {
+        return result;
     }
     
     // This magic denotes the first possible vertical wall
@@ -391,6 +396,7 @@ Player* Quoridor::opposingPlayer() {
 string Quoridor::boardToStr(Player *p1, Player *p2) {
 
   char toReturn[324] = {'0'};
+  memset(toReturn, '0', sizeof(char) * 324);
   int arrI = 18 * p1->x + p1->y;
   toReturn[arrI] = '1';
   arrI = 18 * p2->x + p2->y;
@@ -403,8 +409,11 @@ string Quoridor::boardToStr(Player *p1, Player *p2) {
     arrI = 18 * stoi(coords.at(0)) + stoi(coords.at(1));
     toReturn[arrI] = '-';
   }
+  ostringstream oss;
+  oss << turn << "," << p1->numWalls << "," << p2->numWalls 
+      << string(toReturn);
 
-  return string(toReturn);
+  return oss.str();
 }
 
 // Splits a string by the passed in character d
@@ -427,10 +436,15 @@ void Quoridor::play() {
   while (isGameOver() == -1) {
     // Display current board.
     displayBoard();
-    vector<string> s = getLegalMoves(p1, p2);
-    for (vector<string>::iterator it = s.begin(); it != s.end(); it ++){
-        cout << *it << "\n";
-    }
+
+    // DEBUG-------------------------------------------------- 
+    cout << boardToStr(p1,p2);
+
+//    vector<string> s = getLegalMoves(p1, p2);
+//    for (vector<string>::iterator it = s.begin(); it != s.end(); it ++){
+//        cout << *it << "\n";
+//    }
+    // END DEBUG----------------------------------------------
     
     // Prompt player for move.
     if (!turn)
