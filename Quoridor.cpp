@@ -41,6 +41,11 @@ void Quoridor::makeMove(string action) {
     }
     else {
 	cout << "Invalid move. Please try again." << endl;
+    cout << "Player 1: " << p1->x << " " << p1->y << endl;
+    cout << "Player 2: " << p2->x << " " << p2->y << endl;
+    for (auto it = walls.begin(); it != walls.end(); ++it) {
+      cout << *it << endl;
+    }
     }
   }
   else if (move.size() == 5 && move[0] == "w") {
@@ -276,7 +281,7 @@ bool Quoridor::checkLegalWall(int sX, int sY, int eX, int eY) {
 bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int eY) {
   // Check player still has wall to put down
   if (p1->numWalls == 10) {
-    cout << p1->name << " has no more walls. Enter again." << endl;
+    // cout << p1->name << " has no more walls. Enter again." << endl;
     return false;
   }
 
@@ -287,7 +292,7 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
   // Check wall does not cross boundaries and is not on the edges of the board.
   if (sX == 0 || sY == 0 || eX == 0 || eY == 0 ||
       sX == 18 || sY == 18 || eX == 18 || eY == 18) {
-    cout << "Wall crosses boundaries. Enter again." << endl;
+    // cout << "Wall crosses boundaries. Enter again." << endl;
     cout << sX << ", " << sY;
     return false;
   }
@@ -295,25 +300,26 @@ bool Quoridor::isLegalWall(Player* p1, Player* p2, int sX, int sY, int eX, int e
   // Check if valid wall. I.e., adjacent edges.
   if (!((sX == eX && abs(sY - eY) == 2) ||
 	(abs(sX - eX) && sY == eY))) {
-    cout << "Invalid walls. Enter again." << endl;
+    // cout << "Invalid walls. Enter again." << endl;
     return false;
   }
 
   // Check that wall does not overlap with existing walls on board
+  // TODO: This needs to be more comprehensive. E.g., crossing walls, T-shape.
   if (isAlreadyWall(sX, sY) || isAlreadyWall(eX, eY)) {
-    cout << "Wall already at location. Enter again." << endl;
+    // cout << "Wall already at location. Enter again." << endl;
     return false;
   }
   
   // Check p1.
   if(!floodfill(p1, p2, 17)) {
-    cout << "This wall prevents " << p1->name << " from reaching the end! Enter again." << endl;
+    // cout << "This wall prevents " << p1->name << " from reaching the end! Enter again." << endl;
     return false;
   }
 
   // Check p2.
   if(!floodfill(p2, p1, 1)) {
-    cout << "This wall prevents " << p2->name << " from reaching the end! Enter again." << endl;
+    // cout << "This wall prevents " << p2->name << " from reaching the end! Enter again." << endl;
     return false;
   }
 
@@ -404,53 +410,53 @@ int Quoridor::isGameOver() {
 }
 
 // Displays the quoridor board
-void Quoridor::displayBoard() {
-  cout << "    1   2   3   4   5   6   7   8   9" << endl;
+void Quoridor::displayBoard(ostream& out) {
+  out << "    1   2   3   4   5   6   7   8   9" << endl;
 
   // Edges are even numbers, spaces are odd numbers.
   for (int i=0; i<19; i++) {
 
     // Vertical numbers.
     if (i % 2 != 0)
-      cout << i / 2 + 1 << " ";
+      out << i / 2 + 1 << " ";
     else
-      cout << "  ";
+      out << "  ";
 
     for (int j=0; j<19; j++) {
         
       if (i % 2 == 0) {
         if (j % 2 == 0) {
-	  cout << ".";
+	  out << ".";
 	  if (j == 18)
-	    cout << " " << i;
+	    out << " " << i;
 	}
         else {
 	  if (isAlreadyWall(i, j))
-	    cout << " W ";
+	    out << " W ";
 	  else
-	    cout << "---";
+	    out << "---";
       }
     }
     else {
       if (j % 2 == 0) {
 	if (isAlreadyWall(i, j))
-	  cout << "W";
+	  out << "W";
 	else
-	  cout << "|";
+	  out << "|";
       }
       else {
         if (p1->x == i && p1->y == j)
-          cout << " 1 ";
+          out << " 1 ";
         else if (p2->x == i && p2->y == j)
-          cout << " 2 ";
+          out << " 2 ";
         else
-          cout << "   ";
+          out << "   ";
       }
     }
   }
-  cout << endl;
+  out << endl;
   }
-  cout << "  0   2   4   6   8   10  12  14  16  18" << endl;
+  out << "  0   2   4   6   8   10  12  14  16  18" << endl;
 }
 
 Player* Quoridor::currPlayer() {
@@ -517,7 +523,7 @@ void Quoridor::play() {
   string input;
   while (isGameOver() == -1) {
     // Display current board.
-    displayBoard();
+    displayBoard(cout);
 
     // DEBUG-------------------------------------------------- 
     cout << boardToStr(p1,p2);
@@ -538,42 +544,46 @@ void Quoridor::play() {
     makeMove(input);
   }
 
+  displayBoard(cout);
+
   if (isGameOver() == 0)
     cout << p1->name << " has won!" << endl;
   else if (isGameOver() == 1)
     cout << p2->name << " has won!" << endl;
 }
 
-void Quoridor::playAI(AI* ai1, AI* ai2) {
+void Quoridor::playAI(AI* ai1, AI* ai2, ostream& out) {
   while (isGameOver() == -1) {
     ai1->q = this;
     ai2->q = this;
 
-    cout << "Player 1: " << p1->x << " " << p1->y << endl;
-    cout << "Player 2: " << p2->x << " " << p2->y << endl;
+    out << "Player 1: " << p1->x << " " << p1->y << endl;
+    out << "Player 2: " << p2->x << " " << p2->y << endl;
 
     // Display current board.
-    displayBoard();
+    displayBoard(out);
 
     string move;
     
     // Prompt player for move.
     if (!turn) {
       move = ai1->getNextMove();
-      cout << "AI 1: " << move << endl;
+      out << "AI 1: " << move << endl;
     }
     else {
       move = ai2->getNextMove();
-      cout << "AI 2: " << move << endl;
+      out << endl << "AI 2: " << move << endl;
     }
 
     makeMove(move);
     // break;
   }
 
+  displayBoard(cout);
+
   if (isGameOver() == 0)
-    cout << p1->name << " has won!" << endl;
+    out << p1->name << " has won!" << endl;
   else if (isGameOver() == 1)
-    cout << p2->name << " has won!" << endl;
+    out << p2->name << " has won!" << endl;
 }
 

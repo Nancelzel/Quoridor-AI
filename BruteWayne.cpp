@@ -5,83 +5,105 @@
 #include <string>
 #include <utility>
 
-bool operator<(const Node& lhs, const Node& rhs) {
-  return lhs.second < rhs.second;
-}
-
 std::string BruteWayne::getNextMove() {
+  std::cout << "BruteWayne" << std::endl;
   // Choose whether to move or wall.
   // If wall, choose a random wall.
   if (moveOrWall() == 1) {
+    std::cout << "wall" << std::endl;
     std::vector<std::string> possible_walls = q->legalWalls(q->currPlayer(), q->opposingPlayer());
     std::random_shuffle(possible_walls.begin(), possible_walls.end());
     return possible_walls[0];
   }
+  std::cout << "dijkstra" << std::endl;
   // If move, use Dijkstra's algorithm.
   std::vector<std::vector<double>> dist(9, std::vector<double>(9, DBL_MAX));
   std::vector<std::vector<bool>> visited(9, std::vector<bool>(9, false));
+  std::vector<std::vector<Node*>> nodes;
   std::vector<std::vector<std::pair<int, int>>> prev(9, std::vector<std::pair<int, int>>(9, std::make_pair(-1, -1)));
-  dist[q->currPlayer()->x][q->currPlayer()->y] = 0;
+  dist[(q->currPlayer()->x - 1) / 2][(q->currPlayer()->y - 1) / 2] = 0;
 
-  std::priority_queue<Node, std::vector<Node>> pq;
+  std::unordered_set<Node*> pq;
 
-  // TODO: Make sure p1.x and p1.y are 0 to 17.
   for (int row = 0; row < 9; ++row) {
+    std::vector<Node*> row_nodes;
     for (int col = 0; col < 9; ++col) {
-      if (2 * row - 1 == q->currPlayer()->x && 2 * col - 1 == q->currPlayer()->y)
-	pq.push(std::make_pair(std::make_pair(row, col), 0.0));
-      else
-	pq.push(std::make_pair(std::make_pair(row, col), DBL_MAX));
+      int new_row = 2 * (row + 1) - 1;
+      int new_col = 2 * (col + 1) - 1;
+      Node* new_node = new Node();
+      new_node->first = std::make_pair(row, col);
+      if (new_row == q->currPlayer()->x && new_col == q->currPlayer()->y) {
+	new_node->second = 0.0;
+      }
+      else {
+	new_node->second = DBL_MAX;
+      }
+      pq.insert(new_node);
+      row_nodes.push_back(new_node);
     }
+    nodes.push_back(row_nodes);
   }
 
   while (!pq.empty()) {
-    Node u = pq.top(); // Source node will be selected first.
-    int x = u.first.first;
-    int y = u.first.second;
-    visited[x][y] = true;
-    pq.pop();
+    // Get node with smallest distance. Source node will be selected first.
+    Node* u = *pq.begin();
+    for (auto it = pq.begin(); it != pq.end(); ++it) {
+      if ((*it)->second < u->second) {
+	u = *it;
+      }
+    }
+    
+    int row = u->first.first;
+    int col = u->first.second;
+    int convert_row = 2 * row + 1;
+    int convert_col = 2 * col + 1;
+    visited[row][col] = true;
+    pq.erase(u);
 
     // North
-    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*(x - 1)-1, 2*y-1) && !visited[x - 1][y]) {
-      double alt = dist[x][y] + 1;
-      if (alt < dist[x-1][y]) {
-	dist[x-1][y] = alt;
-	prev[x-1][y] = std::make_pair(x, y);
+    if (row - 1 >= 0 && !q->isAlreadyWall(convert_row - 1, convert_col) && !visited[row - 1][col]) {
+      double alt = dist[row][col] + 1;
+      if (alt < dist[row-1][col]) {
+	dist[row-1][col] = alt;
+	nodes[row-1][col]->second = alt;
+	prev[row-1][col] = std::make_pair(row, col);
       }
     }
 	
     // South
-    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*(x + 1)-1, 2*y-1) && !visited[x + 1][y]) {
-      double alt = dist[x][y] + 1;
-      if (alt < dist[x+1][y]) {
-	dist[x+1][y] = alt;
-	prev[x+1][y] = std::make_pair(x, y);
+    if (row + 1 <= 8 && !q->isAlreadyWall(convert_row + 1, convert_col) && !visited[row + 1][col]) {
+      double alt = dist[row][col] + 1;
+      if (alt < dist[row+1][col]) {
+	dist[row+1][col] = alt;
+	nodes[row+1][col]->second = alt;
+	prev[row+1][col] = std::make_pair(row, col);
       }
     }
     
     // East
-    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*x-1, 2*(y + 1)-1) && !visited[x][y+1]) {
-      double alt = dist[x][y] + 1;
-      if (alt < dist[x][y+1]) {
-	dist[x][y+1] = alt;
-	prev[x][y+1] = std::make_pair(x, y);
+    if (col + 1 <= 8 && !q->isAlreadyWall(convert_row, convert_col + 1) && !visited[row][col + 1]) {
+      double alt = dist[row][col] + 1;
+      if (alt < dist[row][col+1]) {
+	dist[row][col+1] = alt;
+	nodes[row][col+1]->second = alt;
+	prev[row][col+1] = std::make_pair(row, col);
       }
     }
 
     // West
-    if (q->isLegalMove(q->currPlayer(), q->opposingPlayer(), 2*x-1, 2*(y - 1)-1) && !visited[x][y-1]) {
-      double alt = dist[x][y] + 1;
-      if (alt < dist[x][y-1]) {
-	dist[x][y-1] = alt;
-	prev[x][y-1] = std::make_pair(x, y);
+    if (col - 1 >= 0 && !q->isAlreadyWall(convert_row, convert_col - 1) && !visited[row][col - 1]) {
+      double alt = dist[row][col] + 1;
+      if (alt < dist[row][col-1]) {
+	dist[row][col-1] = alt;
+	nodes[row][col-1]->second = alt;
+	prev[row][col-1] = std::make_pair(row, col);
       }
     }
   }
 
-  int endgame_col = 1;
+  int endgame_col = 8; // Player 1 wants to reach the right side.
   if (q->getTurn())
-    endgame_col = 9;
+    endgame_col = 0; // Player 2 wants to reach the left side.
 
   int lowest_score = dist[0][endgame_col];
   int endgame_row = 0;
@@ -92,15 +114,23 @@ std::string BruteWayne::getNextMove() {
     }
   }
 
+  std::cout << "before" << std::endl;
+
   std::pair<int, int> next_move = std::make_pair(endgame_row, endgame_col);
-  while (prev[next_move.first][next_move.second] != std::make_pair(q->currPlayer()->x, q->currPlayer()->y)) {
+  while (prev[next_move.first][next_move.second] != std::make_pair((q->currPlayer()->x - 1) / 2, (q->currPlayer()->y - 1) / 2)) {
+    if (next_move.first == -1 || next_move.second == -1) {
+      std::cout << "This should never happen." << std::endl;
+      break;
+    }
     next_move = prev[next_move.first][next_move.second];
   }
-  
-  return "m " + std::to_string(2 * next_move.first - 1) + " " + std::to_string(2 * next_move.second - 1);
+
+  // std::cout << "after" << std::endl;
+  std::cout << "after " << "m " + std::to_string(2 * next_move.first + 1) + " " + std::to_string(2 * next_move.second + 1) << std::endl;
+
+  return "m " + std::to_string(2 * next_move.first + 1) + " " + std::to_string(2 * next_move.second + 1);
 }
 
-// TODO: Make sure to seed rand in both BruteWayne and Randomizer.
 int BruteWayne::moveOrWall() {
   // AI has no more walls to place down, will strictly move
   if(q->getNumWalls() == 10)

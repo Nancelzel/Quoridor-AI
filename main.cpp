@@ -4,17 +4,20 @@
 #include "Randomizer.h"
 #include "BruteWayne.h"
 
+#include <fstream>
 #include <ctime>
 #include <cstdlib>
 
 int main() {
   srand(time(NULL));
+
+  std::ofstream out("testgame");
   
   // Quoridor* quoridor = new Quoridor();
   Quoridor quoridor;
   
   AI* ai1 = new Randomizer();
-  AI* ai2 = new Randomizer();
+  AI* ai2 = new BruteWayne();
   // AI* ai3 = new BruteWayne();
   // ai2->q = quoridor;
   // ai3->q = quoridor;
@@ -22,7 +25,7 @@ int main() {
   // std::cout << ai2->getNextMove() << std::endl;
   // std::cout << ai3->getNextMove() << std::endl;
 
-  quoridor.playAI(ai1, ai2);
+  quoridor.playAI(ai1, ai2, out);
 
   // TODO: Board must be updated every iteration?
   /*

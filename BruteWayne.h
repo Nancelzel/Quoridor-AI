@@ -6,19 +6,6 @@
 
 typedef std::pair<std::pair<int, int>, double> Node;
 
-/*
-class BruteWayne {
-  // Returns the next move Randomizer decides to make to Quoridor
-  std::string getNextMove();
-
-  // Randomly decides to move or place a wall
-  int moveOrWall();
-
-  Quoridor q;
-
-};
-*/
-
 class BruteWayne : public AI {
   // Returns the next move Randomizer decides to make to Quoridor
   std::string getNextMove();

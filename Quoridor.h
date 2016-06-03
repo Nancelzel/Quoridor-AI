@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <utility>
+// #include <ostream>
 #include <vector>
 #include <unordered_set>
 
@@ -55,7 +56,7 @@ class Quoridor {
 
   int getTurn();
 
-  // Checks if this is a wall.
+  // Checks if this is a wall (as opposed to a space).
   bool isWall(int x, int y);
 
   // Checks if there is a wall at (x, y).
@@ -91,12 +92,12 @@ class Quoridor {
   int isGameOver();
 
   // Displays the board
-  void displayBoard();
+  void displayBoard(std::ostream& out);
 
   // Play a game of Quoridor.
   void play();
 
-  void playAI(AI* ai1, AI* ai2);
+  void playAI(AI* ai1, AI* ai2, std::ostream& out);
 
   // Returns the current player
   Player* currPlayer();
