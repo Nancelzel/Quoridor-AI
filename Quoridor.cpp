@@ -29,7 +29,7 @@ void Quoridor::makeMove(string action) {
 
   // Either move or build wall.
   if (move.size() == 3 && move[0] == "m") {
-    if (isLegalMove(currPlayer(), opposingPlayer(), 2 * stoi(move[1]) - 1, 2 * stoi(move[2]) - 1)) {
+    if (isLegalMove(currPlayer(), opposingPlayer(), stoi(move[1]), stoi(move[2]))) {
 	updatePlayer(currPlayer(), stoi(move[1]), stoi(move[2]));
 	
 	// Switch turns.
@@ -395,8 +395,9 @@ Player* Quoridor::opposingPlayer() {
 //  3 = area taken by player 2
 string Quoridor::boardToStr(Player *p1, Player *p2) {
 
-  char toReturn[324] = {'0'};
+  char toReturn[325] = {'0'};
   memset(toReturn, '0', sizeof(char) * 324);
+  toReturn[324] = 0;
   int arrI = 18 * p1->x + p1->y;
   toReturn[arrI] = '1';
   arrI = 18 * p2->x + p2->y;
@@ -410,8 +411,9 @@ string Quoridor::boardToStr(Player *p1, Player *p2) {
     toReturn[arrI] = '-';
   }
   ostringstream oss;
+  string ret = string(toReturn);
   oss << turn << "," << p1->numWalls << "," << p2->numWalls 
-      << string(toReturn);
+      << ret;
 
   return oss.str();
 }
