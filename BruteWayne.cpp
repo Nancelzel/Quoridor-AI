@@ -6,16 +6,13 @@
 #include <utility>
 
 std::string BruteWayne::getNextMove() {
-  std::cout << "BruteWayne" << std::endl;
   // Choose whether to move or wall.
   // If wall, choose a random wall.
   if (moveOrWall() == 1) {
-    std::cout << "wall" << std::endl;
     std::vector<std::string> possible_walls = q->legalWalls(q->currPlayer(), q->opposingPlayer());
     std::random_shuffle(possible_walls.begin(), possible_walls.end());
     return possible_walls[0];
   }
-  std::cout << "dijkstra" << std::endl;
   // If move, use Dijkstra's algorithm.
   std::vector<std::vector<double>> dist(9, std::vector<double>(9, DBL_MAX));
   std::vector<std::vector<bool>> visited(9, std::vector<bool>(9, false));
@@ -114,8 +111,6 @@ std::string BruteWayne::getNextMove() {
     }
   }
 
-  std::cout << "before" << std::endl;
-
   std::pair<int, int> next_move = std::make_pair(endgame_row, endgame_col);
   while (prev[next_move.first][next_move.second] != std::make_pair((q->currPlayer()->x - 1) / 2, (q->currPlayer()->y - 1) / 2)) {
     if (next_move.first == -1 || next_move.second == -1) {
@@ -124,9 +119,6 @@ std::string BruteWayne::getNextMove() {
     }
     next_move = prev[next_move.first][next_move.second];
   }
-
-  // std::cout << "after" << std::endl;
-  std::cout << "after " << "m " + std::to_string(2 * next_move.first + 1) + " " + std::to_string(2 * next_move.second + 1) << std::endl;
 
   return "m " + std::to_string(2 * next_move.first + 1) + " " + std::to_string(2 * next_move.second + 1);
 }

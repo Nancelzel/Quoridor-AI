@@ -4,19 +4,6 @@
 #include "AI.h"
 #include <string>
 
-/*
-class Randomizer {
-  // Returns the next move Randomizer decides to make to Quoridor
-  std::string getNextMove();
-
-  // Randomly decides to move or place a wall
-  int moveOrWall();
-
-  Quoridor q;
-
-};
-*/
-
 class Randomizer : public AI {
   // Returns the next move Randomizer decides to make to Quoridor
   std::string getNextMove();

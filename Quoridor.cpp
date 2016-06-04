@@ -41,11 +41,6 @@ void Quoridor::makeMove(string action) {
     }
     else {
 	cout << "Invalid move. Please try again." << endl;
-    cout << "Player 1: " << p1->x << " " << p1->y << endl;
-    cout << "Player 2: " << p2->x << " " << p2->y << endl;
-    for (auto it = walls.begin(); it != walls.end(); ++it) {
-      cout << *it << endl;
-    }
     }
   }
   else if (move.size() == 5 && move[0] == "w") {
@@ -524,15 +519,6 @@ void Quoridor::play() {
   while (isGameOver() == -1) {
     // Display current board.
     displayBoard(cout);
-
-    // DEBUG-------------------------------------------------- 
-    cout << boardToStr(p1,p2);
-
-//    vector<string> s = getLegalMoves(p1, p2);
-//    for (vector<string>::iterator it = s.begin(); it != s.end(); it ++){
-//        cout << *it << "\n";
-//    }
-    // END DEBUG----------------------------------------------
     
     // Prompt player for move.
     if (!turn)
@@ -579,7 +565,7 @@ void Quoridor::playAI(AI* ai1, AI* ai2, ostream& out) {
     // break;
   }
 
-  displayBoard(cout);
+  displayBoard(out);
 
   if (isGameOver() == 0)
     out << p1->name << " has won!" << endl;
